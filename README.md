@@ -1,4 +1,4 @@
-# Election-scrapper:
+# Election-scraper:
 election scrapper from volby.cz (https://volby.cz/pls/ps2017nss/ps3?xjazyk=CZ)
 
 # Instaling Libraries :
