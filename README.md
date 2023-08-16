@@ -18,6 +18,10 @@ After that program will generate .csv file with results.
 
 ![obrazek](https://github.com/Zncrw/election-scrapper/assets/132506987/48a61640-db66-4f6e-8525-d97cf910498d)
 
+then program starts generating .csv file.
+  # Partial program output :
+  
+
 
 
 
