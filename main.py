@@ -19,18 +19,14 @@ def main():
     if len(sys.argv) != 3:
         print("Wrong number of arguments. Use: python script.py <link> <output_file.csv>")
         return
-
     link = sys.argv[1]
     output_file = sys.argv[2]
-
     if not link.startswith('https://volby.cz'):
         print("Neplatný odkaz. Zadejte odkaz obsahující 'https://volby.cz'")
         return
     number = get_number(link)
     website_common = link
-    # making one universal link to scrap data
-    website_for_each_city = website_common.split('=')
-    region_number = website_for_each_city[2]
+
     # first data frame
     data = {
         'Number': get_number(website_common),
@@ -38,9 +34,9 @@ def main():
     }
     data2 = []
     # generate url for each city
-    for idx in number:
-        start_url = 'https://volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj='
-        url = f'{start_url}{region_number[:2]}&xobec={idx}&xvyber={website_for_each_city[-1]}'
+    link_endings = get_link_end(website_common)
+    for idx, link_end in zip(number, link_endings):
+        url = f'https://volby.cz/pls/ps2017nss/{link_end}'
         # second data frame
         data_rows = {
             'Number': idx,
@@ -95,6 +91,16 @@ def swap_columns(df, col1, col2):
     df = df[col_list]
     return df
 
+
+def get_link_end(website):
+    link_ending = []
+    results = get_results(website)
+    for result in results:
+        try:
+            link_ending.append(result.find('td', {'class': 'cislo'}).find('a')['href'])
+        except:
+            continue
+    return link_ending
 
 def get_results(website):
     """
@@ -186,7 +192,8 @@ def get_valid(website: str) -> list:
             continue
     return valid
 
-def get_political_party(website:str) -> list:
+
+def get_political_party(website: str) -> list:
     """
     function getting names of political parties from volby.cz for each region
     :param website: volby.cz
@@ -222,5 +229,3 @@ def get_votes(website: str) -> list:
 
 if __name__ == '__main__':
     main()
-
-
