@@ -125,6 +125,8 @@ def get_city(website: str) -> list:
         try:
             cities.append(result.find('td', {'class': 'overflow_name'}).get_text())
         except:
+            cities.append((result.find('td', {'headers': 't2sa1 t2sb2'}).find('a').get_text()))
+        finally:
             continue
     return cities
 
