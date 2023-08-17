@@ -119,15 +119,30 @@ def get_city(website: str) -> list:
     :param website: url of volby.cz
     :return: list of city names
     """
-    cities = []
+    cities = set()
+
     results = get_results(website)
     for result in results:
         try:
-            cities.append(result.find('td', {'class': 'overflow_name'}).get_text())
+            cities.add(result.find('td', {'class': 'overflow_name'}).get_text())
         except:
-            cities.append((result.find('td', {'headers': 't2sa1 t2sb2'}).find('a').get_text()))
-        finally:
-            continue
+            pass
+
+        try:
+            city_alternate = result.find('td', {'headers': 't2sa1 t2sb2'}).find('a').get_text()
+            if city_alternate:
+                cities.add(city_alternate)
+        except:
+            pass
+
+        try:
+            city_t1sa1_t1sb2 = result.find('td', {'headers': 't1sa1 t1sb2'}).get_text()
+            if city_t1sa1_t1sb2:
+                cities.add(city_t1sa1_t1sb2)
+        except:
+            pass
+
+    cities = list(cities)
     return cities
 
 
