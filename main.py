@@ -103,15 +103,15 @@ def get_link_end(website):
     return link_ending
 
 
+results_cache = {}
+
 def get_results(website):
-    """
-    function is reading html, making soup object and then finding all 'tr' elements
-    :param website: link
-    """
-    response = requests.get(website)
-    soup = bs(response.content, features='html.parser')
-    results = soup.find_all('tr')
-    return results
+    if website not in results_cache:
+        response = requests.get(website)
+        soup = bs(response.content, features='html.parser')
+        results_cache[website] = soup.find_all('tr')
+    return results_cache[website]
+
 
 
 def get_city(website: str) -> list:
