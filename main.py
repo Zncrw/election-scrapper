@@ -102,6 +102,7 @@ def get_link_end(website):
             continue
     return link_ending
 
+
 def get_results(website):
     """
     function is reading html, making soup object and then finding all 'tr' elements
@@ -115,34 +116,35 @@ def get_results(website):
 
 def get_city(website: str) -> list:
     """
-    function made to scrap city names from website
-    :param website: url of volby.cz
-    :return: list of city names
+    Funkce pro získání jedinečných jmen obvodů ze stránky.
+    :param website: URL adresa stránky
+    :return: Seznam jedinečných jmen obvodů
     """
-    cities = set()
+    cities = []
 
     results = get_results(website)
     for result in results:
         try:
-            cities.add(result.find('td', {'class': 'overflow_name'}).get_text())
+            city = result.find('td', {'class': 'overflow_name'}).get_text()
+            if city not in cities:
+                cities.append(city)
         except:
             pass
 
         try:
             city_alternate = result.find('td', {'headers': 't2sa1 t2sb2'}).find('a').get_text()
-            if city_alternate:
-                cities.add(city_alternate)
+            if city_alternate and city_alternate not in cities:
+                cities.append(city_alternate)
         except:
             pass
 
         try:
             city_t1sa1_t1sb2 = result.find('td', {'headers': 't1sa1 t1sb2'}).get_text()
-            if city_t1sa1_t1sb2:
-                cities.add(city_t1sa1_t1sb2)
+            if city_t1sa1_t1sb2 and city_t1sa1_t1sb2 not in cities:
+                cities.append(city_t1sa1_t1sb2)
         except:
             pass
 
-    cities = list(cities)
     return cities
 
 
@@ -173,6 +175,7 @@ def get_envelopes(website: str) -> list:
     for result in city_results:
         try:
             envelopes.append(result.find('td', {'data-rel': 'L1', 'headers': 'sa3'}).get_text().strip())
+
         except:
             continue
     return envelopes
@@ -235,8 +238,10 @@ def get_votes(website: str) -> list:
     votes = []
     party_results = get_results(website)
     for result in party_results:
+
         try:
             votes.append(result.find('td', {'class': 'cislo', 'headers': 't1sa2 t1sb3'}).get_text().strip())
+
         except:
             votes.append(result.find('td', {'class': 'cislo', 'headers': 't2sa2 t2sb3'}).get_text().strip())
         finally:
